@@ -1,17 +1,27 @@
+import { Link, Route, Routes } from 'react-router-dom';
 import './App.css';
-import { fetchTodos } from './data';
+import { FC } from 'react';
+import { TodosController } from './routes/root/TodosContoller';
 
-function App() {
-  const data = fetchTodos();
-  console.log('gb - data:', data);
-
+function NoMatch() {
   return (
-    <>
-      <div>
-        <h1>Hello World</h1>
-      </div>
-    </>
+    <div>
+      <h2>Nothing to see here!</h2>
+      <p>
+        <Link to="/">Go back to the home page</Link>
+      </p>
+    </div>
   );
 }
 
-export default App;
+export const App: FC = () => (
+  <Routes>
+    <Route path="/" element={<TodosController />}>
+      {/* Using path="*"" means "match anything", so this route
+        acts like a catch-all for URLs that we don't have explicit
+      routes for. */}
+      <Route path="*" element={<NoMatch />} />
+    </Route>
+    {/* <Route path="todo" element={<Todo />} /> */}
+  </Routes>
+);
