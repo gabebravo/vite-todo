@@ -9,7 +9,7 @@ import { TodoView } from './TodoView';
 export const TodoController: React.FC = () => {
   const { id } = useParams();
   useQuery({
-    queryKey: ['todo', '123'],
+    queryKey: ['todos', id],
     queryFn: () => fetchTodo(id),
     refetchOnWindowFocus: false,
     enabled: Boolean(id),

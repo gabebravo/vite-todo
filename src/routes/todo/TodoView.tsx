@@ -7,7 +7,7 @@ type Props = {
 };
 export const TodoView: React.FC<Props> = ({ id }) => {
   const { data } = useSuspenseQuery<Todo>({
-    queryKey: ['todo', '123'],
+    queryKey: ['todos', id],
     queryFn: () => fetchTodo(id),
     refetchOnWindowFocus: false,
   });
