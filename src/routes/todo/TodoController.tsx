@@ -1,16 +1,23 @@
 import { QueryErrorResetBoundary, useQuery } from '@tanstack/react-query';
-import { fetchTodos } from '../../data';
+import { fetchTodo } from '../../data';
+import { useParams } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
 import { toast } from 'react-toastify';
 import React from 'react';
-import { TodosView } from './TodosView';
+import { TodoView } from './TodoView';
 
-export const TodosController: React.FC = () => {
+export const TodoController: React.FC = () => {
+  const { id } = useParams();
   useQuery({
-    queryKey: ['todos', fetchTodos],
-    queryFn: () => fetchTodos(),
+    queryKey: ['todo', '123'],
+    queryFn: () => fetchTodo(id),
     refetchOnWindowFocus: false,
+    enabled: Boolean(id),
   });
+
+  if (!id) {
+    return null;
+  }
 
   return (
     <QueryErrorResetBoundary>
@@ -33,8 +40,8 @@ export const TodosController: React.FC = () => {
           }}
           onReset={reset}
         >
-          <React.Suspense fallback={<h3>Loading Todos...</h3>}>
-            <TodosView />
+          <React.Suspense fallback={<h3>Loading Todo...</h3>}>
+            <TodoView id={id} />
           </React.Suspense>
         </ErrorBoundary>
       )}

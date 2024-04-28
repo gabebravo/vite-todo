@@ -2,6 +2,7 @@ import { Link, Route, Routes } from 'react-router-dom';
 import './App.css';
 import { FC } from 'react';
 import { TodosController } from './routes/root/TodosContoller';
+import { TodoController } from './routes/todo/TodoController';
 
 function NoMatch() {
   return (
@@ -22,6 +23,6 @@ export const App: FC = () => (
       routes for. */}
       <Route path="*" element={<NoMatch />} />
     </Route>
-    {/* <Route path="todo" element={<Todo />} /> */}
+    <Route path="/todo/:id" element={<TodoController />} />
   </Routes>
 );
