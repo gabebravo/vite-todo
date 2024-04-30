@@ -8,9 +8,9 @@ import { deleteTodo } from '../../data/todos';
 export const TodosView: React.FC = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: deleteTodo,
+    mutationFn: (id: string) => deleteTodo(id),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['todos'] });
+      return await queryClient.invalidateQueries({ queryKey: ['todos'] });
     },
   });
 
