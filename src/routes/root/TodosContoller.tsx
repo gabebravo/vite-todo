@@ -4,6 +4,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { toast } from 'react-toastify';
 import React from 'react';
 import { TodosView } from './TodosView';
+import { ErrorBoundaryFallback } from '../../components/ErrorBoundaryFallback';
 
 export const TodosController: React.FC = () => {
   useQuery({
@@ -16,8 +17,8 @@ export const TodosController: React.FC = () => {
     <QueryErrorResetBoundary>
       {({ reset }) => (
         <ErrorBoundary
-          fallbackRender={({ error, resetErrorBoundary }) => {
-            const { message } = error as Error;
+          onError={(error: Error) => {
+            const { message } = error;
             return toast.error(message, {
               toastId: 'error-boundary',
               position: 'bottom-left',
@@ -28,9 +29,9 @@ export const TodosController: React.FC = () => {
               draggable: true,
               progress: undefined,
               theme: 'light',
-              onClose: () => resetErrorBoundary(),
             });
           }}
+          fallbackRender={ErrorBoundaryFallback}
           onReset={reset}
         >
           <React.Suspense fallback={<h3>Loading Todos...</h3>}>

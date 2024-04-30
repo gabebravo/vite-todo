@@ -13,12 +13,12 @@ export const fetchTodos = async (): Promise<Todo[]> => {
     } else {
       // Handle the case where response or response.data is undefined
       console.error('Response or response data is undefined');
-      throw new Error('Coult not find that data');
+      throw new Error('Could not find that data');
     }
   } catch (error) {
     // Handle the network error
     console.error('Network error:', error);
-    throw new Error('Coult not fetch todos');
+    throw new Error('Could not fetch todos');
   }
 };
 
@@ -32,11 +32,30 @@ export const fetchTodo = async (id: string | undefined): Promise<Todo> => {
     } else {
       // Handle the case where response or response.data is undefined
       console.error('Response or response data is undefined');
-      throw new Error('Coult not find that data');
+      throw new Error('Could not find that data');
     }
   } catch (error) {
     // Handle the network error
     console.error('Network error:', error);
-    throw new Error('Coult not fetch todo');
+    throw new Error('Could not fetch todo');
+  }
+};
+
+export const deleteTodo = async (id: string | undefined): Promise<Todo> => {
+  try {
+    const response = await axios.delete<Todo>(`${TODOS_URL}/${id}`);
+    if (response && response.data) {
+      const { data } = response;
+      await new Promise((r) => setTimeout(r, 500));
+      return data;
+    } else {
+      // Handle the case where response or response.data is undefined
+      console.error('Response or response data is undefined');
+      throw new Error('Could not delete that todo');
+    }
+  } catch (error) {
+    // Handle the network error
+    console.error('Network error:', error);
+    throw new Error('Could not delete that todo');
   }
 };
