@@ -1,9 +1,4 @@
-import {
-  QueryErrorResetBoundary,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { QueryErrorResetBoundary, useQuery } from '@tanstack/react-query';
 import { fetchTodos } from '../../data';
 import { ErrorBoundary } from 'react-error-boundary';
 import { toast } from 'react-toastify';
