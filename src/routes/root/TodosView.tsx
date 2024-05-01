@@ -6,23 +6,29 @@ import { Link } from 'react-router-dom';
 import { deleteTodo } from '../../data/todos';
 
 export const TodosView: React.FC = () => {
+  const [loadingId, setLoadingId] = React.useState('');
   const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: (id: string) => deleteTodo(id),
-    onSuccess: async () => {
-      return await queryClient.invalidateQueries({ queryKey: ['todos'] });
-    },
-  });
-
   const { data } = useSuspenseQuery<Todo[]>({
     queryKey: ['todos', fetchTodos],
     queryFn: () => fetchTodos() as unknown as Promise<Todo[]>,
     refetchOnWindowFocus: false,
   });
 
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: (id: string) => deleteTodo(id),
+    onSuccess: async () => {
+      return await queryClient.invalidateQueries({ queryKey: ['todos'] });
+    },
+  });
+
   const deleteHandler = (id: string): void => {
-    mutation.mutate(id);
+    setLoadingId(id);
+    mutate(id);
   };
+
+  if (error) {
+    throw error;
+  }
 
   return data ? (
     <>
@@ -50,7 +56,14 @@ export const TodosView: React.FC = () => {
                 }}
               >
                 <div onClick={() => deleteHandler(todo.id)}>
-                  <i className="fa fa-trash-o" style={{ fontSize: 24 }}></i>
+                  <i
+                    className={
+                      isPending && loadingId === todo.id
+                        ? 'fa fa-refresh fa-spin'
+                        : 'fa fa-trash-o'
+                    }
+                    style={{ fontSize: 24 }}
+                  ></i>
                 </div>
                 <div>
                   <i className="fa fa-square-o" style={{ fontSize: 24 }}></i>
