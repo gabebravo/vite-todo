@@ -4,6 +4,23 @@ import { fetchTodos } from '../../data';
 import { Todo } from '../../types';
 import { Link } from 'react-router-dom';
 import { deleteTodo, updateTodo } from '../../data/todos';
+import { css } from '@emotion/react';
+
+const rootStyles = css`
+  display: flex;
+  width: 350px;
+  justify-content: space-between;
+  margin: 10px 0px;
+`;
+
+const actionsSectionStyles = css`
+  display: flex;
+  width: 85px;
+  justify-content: space-between;
+  div > i {
+    font-size: 24px;
+  }
+`;
 
 export const TodosView: React.FC = () => {
   const [deleteLoadingId, setdeleteLoadingId] = React.useState('');
@@ -54,25 +71,12 @@ export const TodosView: React.FC = () => {
       <ol>
         {data.map((todo: Todo) => (
           <li key={todo.id}>
-            <div
-              style={{
-                display: 'flex',
-                width: 350,
-                justifyContent: 'space-between',
-                margin: '10px 0px',
-              }}
-            >
+            <div css={rootStyles}>
               {' '}
               <Link to={`/todo/${todo.id}`}>
                 <div>{todo.task}</div>
               </Link>
-              <div
-                style={{
-                  display: 'flex',
-                  width: 85,
-                  justifyContent: 'space-between',
-                }}
-              >
+              <div css={actionsSectionStyles}>
                 <div onClick={() => deleteHandler(todo.id)}>
                   <i
                     className={
@@ -80,7 +84,6 @@ export const TodosView: React.FC = () => {
                         ? 'fa fa-refresh fa-spin'
                         : 'fa fa-trash-o'
                     }
-                    style={{ fontSize: 24 }}
                   ></i>
                 </div>
                 <div onClick={() => updateHandler({ ...todo, done: !todo.done })}>
@@ -92,7 +95,6 @@ export const TodosView: React.FC = () => {
                           ? 'fa fa-check'
                           : 'fa fa-square-o'
                     }
-                    style={{ fontSize: 24 }}
                   ></i>
                 </div>
               </div>
