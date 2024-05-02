@@ -3,10 +3,12 @@ import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-q
 import { fetchTodos } from '../../data';
 import { Todo } from '../../types';
 import { Link } from 'react-router-dom';
-import { deleteTodo } from '../../data/todos';
+import { deleteTodo, updateTodo } from '../../data/todos';
 
 export const TodosView: React.FC = () => {
-  const [loadingId, setLoadingId] = React.useState('');
+  const [deleteLoadingId, setdeleteLoadingId] = React.useState('');
+  const [updateLoadingId, setUpdateLoadingId] = React.useState('');
+
   const queryClient = useQueryClient();
   const { data } = useSuspenseQuery<Todo[]>({
     queryKey: ['todos', fetchTodos],
@@ -14,7 +16,7 @@ export const TodosView: React.FC = () => {
     refetchOnWindowFocus: false,
   });
 
-  const { mutate, isPending, error } = useMutation({
+  const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteTodo(id),
     onSuccess: async () => {
       return await queryClient.invalidateQueries({ queryKey: ['todos'] });
@@ -22,12 +24,28 @@ export const TodosView: React.FC = () => {
   });
 
   const deleteHandler = (id: string): void => {
-    setLoadingId(id);
-    mutate(id);
+    setdeleteLoadingId(id);
+    deleteMutation.mutate(id);
   };
 
-  if (error) {
-    throw error;
+  if (deleteMutation.error) {
+    throw deleteMutation.error;
+  }
+
+  const updateMutation = useMutation({
+    mutationFn: (todo: Todo) => updateTodo(todo),
+    onSuccess: async () => {
+      return await queryClient.invalidateQueries({ queryKey: ['todos'] });
+    },
+  });
+
+  const updateHandler = (todo: Todo): void => {
+    setUpdateLoadingId(todo.id);
+    updateMutation.mutate(todo);
+  };
+
+  if (updateMutation.error) {
+    throw updateMutation.error;
   }
 
   return data ? (
@@ -58,18 +76,24 @@ export const TodosView: React.FC = () => {
                 <div onClick={() => deleteHandler(todo.id)}>
                   <i
                     className={
-                      isPending && loadingId === todo.id
+                      deleteMutation.isPending && deleteLoadingId === todo.id
                         ? 'fa fa-refresh fa-spin'
                         : 'fa fa-trash-o'
                     }
                     style={{ fontSize: 24 }}
                   ></i>
                 </div>
-                <div>
-                  <i className="fa fa-square-o" style={{ fontSize: 24 }}></i>
-                </div>
-                <div>
-                  <i className="fa fa-check" style={{ fontSize: 24 }}></i>
+                <div onClick={() => updateHandler({ ...todo, done: !todo.done })}>
+                  <i
+                    className={
+                      updateMutation.isPending && updateLoadingId === todo.id
+                        ? 'fa fa-refresh fa-spin'
+                        : todo.done
+                          ? 'fa fa-check'
+                          : 'fa fa-square-o'
+                    }
+                    style={{ fontSize: 24 }}
+                  ></i>
                 </div>
               </div>
             </div>
