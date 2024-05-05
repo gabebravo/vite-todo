@@ -5,6 +5,7 @@ import { Todo } from '../../types';
 import { Link } from 'react-router-dom';
 import { deleteTodo, updateTodo } from '../../data/todos';
 import { css } from '@emotion/react';
+import { TodoTextField } from '../../components/TodoTextField';
 
 const rootStyles = css`
   display: flex;
@@ -68,6 +69,7 @@ export const TodosView: React.FC = () => {
   return data ? (
     <>
       <h3>Todos</h3>
+      <TodoTextField />
       <ol>
         {data.map((todo: Todo) => (
           <li key={todo.id}>
