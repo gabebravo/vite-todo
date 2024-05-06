@@ -1,23 +1,45 @@
 import { FC } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { createTodo } from '../data/todos';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import React from 'react';
 
 type Inputs = {
   todo: string;
 };
 
 export const TodoTextField: FC = () => {
+  const [isCreateLoading, setIsCreateLoading] = React.useState(false);
+
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
+    reset,
   } = useForm<Inputs>();
+  const queryClient = useQueryClient();
+
+  const createMutation = useMutation({
+    mutationFn: (task: string) => createTodo(task),
+    onSuccess: async () => {
+      setIsCreateLoading(false);
+      return await queryClient.invalidateQueries({ queryKey: ['todos'] });
+    },
+  });
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
+    setIsCreateLoading(true);
+    createMutation.mutate(data.todo);
+    reset();
   };
 
-  console.log(watch('todo')); // watch input value by passing the name of it
+  if (createMutation.error) {
+    throw createMutation.error;
+  }
+
+  if (isCreateLoading) {
+    return <i className="fa fa-refresh fa-spin"></i>;
+  }
 
   return (
     /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
